@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@layer base {
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/*
+  Tokens de shadcn-vue (baseColor: neutral, cssVariables: true) se agregan aquí
+  cuando se ejecute `pnpm dlx shadcn-vue@latest init` o se inserten manualmente.
+*/
