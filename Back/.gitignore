@@ -1,0 +1,23 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+*.pfx
+
+# .NET build artifacts
+bin/
+obj/
+out/
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

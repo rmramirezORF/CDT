@@ -47,17 +47,26 @@ api.interceptors.response.use(
 
     isRefreshing = true
     try {
-      // TODO: cuando exista el módulo auth, llamar authService.refresh()
-      // const newToken = await authService.refresh()
-      // localStorage.setItem('cdt:token', newToken)
-      // flushQueue(newToken)
-      // original.headers = { ...(original.headers || {}), Authorization: `Bearer ${newToken}` }
-      // original._retry = true
-      // return api(original)
-      throw new Error('refresh not implemented yet')
+      // Lazy imports para evitar ciclo de dependencias con el modulo auth.
+      const { useAuthStore } = await import('@/modules/auth/stores/auth')
+      const { default: authService } = await import('@/modules/auth/services/authService')
+      const store = useAuthStore()
+      const refreshToken = store.getRefreshToken()
+      if (!refreshToken) throw new Error('No hay refresh token disponible')
+
+      const tokens = await authService.refresh(refreshToken)
+      store.applyRefreshedTokens(tokens)
+
+      flushQueue(tokens.token)
+      original.headers = { ...(original.headers || {}), Authorization: `Bearer ${tokens.token}` }
+      original._retry = true
+      return api(original)
     } catch (refreshError) {
       flushQueue(null)
+      // Limpieza local — no llamamos store.logout() porque ya estamos en flujo de fallo.
       localStorage.removeItem('cdt:token')
+      localStorage.removeItem('cdt:refresh')
+      localStorage.removeItem('cdt:user')
       if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.href = '/login'
       }
